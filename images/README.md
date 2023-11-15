@@ -1,4 +1,5 @@
 Here are some instructions to build a virtual box or a docker image with all the requirements installed to check the file.
+The Virtual box installation is easier.
 # Virtual Box 
 
 Download a fresh debian image (e.g., https://www.linuxvmimages.com/images/debian-12/). Launch it using [Virtual Box](https://www.virtualbox.org/). 
@@ -19,9 +20,9 @@ docker build -t yade .
 And then,
 ```
 # on windows, in a powershell terminal
-docker run -ti --rm --privileged -v /run/desktop/mnt/host/wslg/.X11-unix:/tmp/.X11-unix -e DISPLAY=:0 yade
+docker run -ti --rm --privileged -e DISPLAY=:0 -v /run/desktop/mnt/host/wslg/.X11-unix:/tmp/.X11-unix yade
 # on linux 
-docker run -ti --rm -e DISPLAY=$DISPLAY --privileged -v /tmp/.X11-unix/:/tmp/.X11-unix/ yade
+docker run -ti --rm --privileged -e DISPLAY=$DISPLAY -v /tmp/.X11-unix/:/tmp/.X11-unix/ yade
 ```
 ## Known issues
 I couldn't find a simple way to make the dockerfile work on Apple silicon (modern Macs), even with rosetta enabled.

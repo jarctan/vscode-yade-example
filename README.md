@@ -1,6 +1,6 @@
 This repository provides an example of use of the vscode extension for the Coreact YADE editor (https://github.com/amblafont/vscode-coreact-yade).
 Instructions to build a virtual environement (virtualbox or docker) with everything installed are provided in the directory
-[images/](images/README.md).
+[images/](images/README.md) (this is probably the easiest way to test the vscode extension).
 
 ## Requirements
 - Coq (tested with v8.18.0)
