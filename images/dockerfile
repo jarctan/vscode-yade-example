@@ -10,7 +10,7 @@ FROM coqorg/coq
 # installing vscode 
 RUN sudo apt-get update || true
 RUN sudo apt-get install -y gnupg
-RUN curl -L https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64 --output code.deb
+RUN curl -L "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64" --output code.deb
 RUN sudo apt install -y ./code.deb
 
 # installing coq-lsp and hiearchy builder
@@ -18,7 +18,7 @@ RUN opam update
 RUN opam install -y coq-lsp coq-hierarchy-builder
 
 # Installing coreact-yade
-RUN curl  -L https://github.com/amblafont/graph-editor-web/releases/download/v0.3-alpha/coreact-yade_1.1.0_amd64.deb --output yade.deb
+RUN curl  -L "https://github.com/amblafont/graph-editor-web/releases/download/v0.3-alpha/coreact-yade_1.1.0_amd64.deb" --output yade.deb
 RUN sudo apt-get update || true
 RUN sudo apt install -y ./yade.deb
 RUN DONT_PROMPT_WSL_INSTALL=No_Prompt_please code --install-extension amblafont.coreact-yade
