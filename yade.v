@@ -97,14 +97,6 @@ Notation "{ x = y }" := (x = y) (x custom mor, y custom mor).
   Notation "x" := x (in custom mor at level 0, x global).
   Notation "| x |" := (x) (x custom obj).
 
-Lemma natural' {C D : precat} {F G : C --> D}
-  (n : Natural.type (C:=C) (D:=D) F G) {a b : C}
-  (f : a --> b) : {{n a} · G f = F f · {n b}}.
-Proof.
-    symmetry.
-    apply natural.
-Qed.
-
 (* *************
 
 This section consists of lemmas and tactics and notations to turn
@@ -174,4 +166,4 @@ Ltac norm_graph_partial :=
 Ltac norm_graph_hyp h := apply add_id_left_hyp in h;  autorewrite with grapheditor in h;
                        change (identity ?x) with (identity' x) in h;
                        cbn in h.
-
+Ltac naturality := apply natural || (symmetry; apply natural). 
