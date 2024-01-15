@@ -73,7 +73,7 @@ Require Import UniMath.CategoryTheory.Core.NaturalTransformations.
 Declare Custom Entry obj.
 Declare Custom Entry mor.
 
-Definition Fob {C D : category} (F : C ~> D) (c : C) : D := F c.
+(* Definition Fob {C D : category} (F : C ~> D) (c : C) : D := F c. *)
 
 (* Lemma Fob' {A B:Type} (F : A -> B) : A -> B.
 Admitted. *)
@@ -81,7 +81,7 @@ Admitted. *)
 
 Notation "{ x = y }" := (x = y) (x custom mor, y custom mor).
   
-  Notation "x y" := (Fob x y) (in custom obj at level 1, right associativity).
+  Notation "x y" := (Functor.sort x y) (in custom obj at level 1, right associativity).
   Notation "< x >" := (x) (x custom mor).
   Notation "| x |" := (identity x) (x custom obj, in custom mor).
   Notation "{ x }" := (x) (in custom obj, x constr).
@@ -132,21 +132,12 @@ Definition comp' {C : category}{a b c : C} : a --> b -> b --> c -> a --> c := @c
     Ltac norm_graph := apply add_id_left;
        rewrite ?(F1i, comp'_comp);
          (* autorewrite with grapheditor; *)
-                       change (identity ?x) with (identity' x);
-                       repeat (change ((?K : _ ~>_cat _) ?b) with (Fob K b)).
+                       change (identity ?x) with (identity' x).
+                       (* repeat (change ((?K : _ ~>_cat _) ?b) with (Fob K b)). *)
 
 
   Notation " f -- g -> z" := (@comp' _ _ _ z f g )  (z custom obj, in custom mor at level 40, left associativity).
 
-
-  Ltac duplicate_goal :=
-    let x := fresh in
-    let y := fresh in
-    let h := fresh in
-    unshelve (eassert (x := _);
-     eassert (y := _);
-     eassert (h := x = y);
-     exact x).
 
 Ltac functor_cancel F :=
   rewrite <- !(Fcomp (s := F));
@@ -166,4 +157,66 @@ Ltac norm_graph_partial :=
 Ltac norm_graph_hyp h := apply add_id_left_hyp in h;  autorewrite with grapheditor in h;
                        change (identity ?x) with (identity' x) in h;
                        cbn in h.
-Ltac naturality := apply natural || (symmetry; apply natural). 
+
+Ltac naturality_toplevel_left := 
+  match goal with
+    | |- { {_}  · {?f _} = {_}}  => 
+     apply (natural f) 
+    | |- { {_} = {?f _}  · {_} }  => 
+     apply (natural f) 
+  end.
+
+
+
+Ltac or_symmetric t := t || (symmetry ; t).
+
+  (* naturality_toplevel_left || (symmetry ; naturality_toplevel_left). *)
+
+Generalizable All Variables.
+
+Lemma Fcomp3  `(F : Functor.type X Y) 
+`(f1 : a1 --> a2) `(f2 : _ --> a3) `(f3 : _ --> a4):
+{F (f1 · f2 · f3) = F f1 · F f2 · F f3}.
+by rewrite !Fcomp.
+Qed.
+
+Lemma Fcomp4  `(F : Functor.type X Y) 
+`(f1 : a1 --> a2) `(f2 : _ --> a3) `(f3 : _ --> a4)`(f4 : _ --> a5):
+{F (f1 · f2 · f3 · f4) = F f1 · F f2 · F f3 · F f4}.
+by rewrite !Fcomp.
+Qed.
+
+Ltac Fcomp_star T :=
+   apply (Fcomp (s := T)) || apply (Fcomp3 T) || apply (Fcomp4 T).
+
+
+Ltac do1_below_right t := 
+  match goal with
+    | |- {  {_} = {_}  · {?T <$> _}} => 
+      etransitivity;[| Fcomp_star T];
+      eapply (maponpaths (T ^$));do1_below_right t;idtac
+    | _ => t
+    end.
+
+
+Ltac do_below_right t := 
+  etransitivity;[|do1_below_right t];    rewrite ?Fcomp; cbn;reflexivity.
+  
+
+Ltac do_below t :=
+  or_symmetric ltac:(idtac;do_below_right t).
+
+
+Ltac naturality_toplevel := 
+  or_symmetric ltac:(idtac; naturality_toplevel_left).
+
+Ltac naturality := 
+  do_below naturality_toplevel.
+
+Ltac applyeq_toplevel eq :=
+  or_symmetric ltac:(apply eq).
+
+Ltac applyeq eq :=
+  do_below ltac:(applyeq_toplevel eq).
+
+Ltac normalise := rewrite ?(Fcomp, assoc); cbn.
