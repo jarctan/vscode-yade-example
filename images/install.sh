@@ -1,4 +1,4 @@
-echo "This script ought to be executed on a fresh debian system."
+techo "This script ought to be executed on a fresh debian system."
 echo "It installs all the requirements to try the vscode extension coreact-yade on https://github.com/amblafont/vscode-yade-example"
 echo "*************"
 echo "Installing curl"
@@ -28,7 +28,7 @@ opam install --confirm-level=unsafe-yes coq coq-lsp coq-hierarchy-builder
 echo "*************"
 echo "Installing coreact-yade"
 echo "*************"
-curl  -L https://github.com/amblafont/graph-editor-web/releases/download/v0.3-alpha/coreact-yade_1.1.0_amd64.deb --output yade.deb
+curl  -L https://github.com/amblafont/graph-editor-web/releases/download/v0.5-alpha/coreact-yade_1.1.0_amd64.deb --output yade.deb
 sudo apt install -y ./yade.deb
 code --install-extension amblafont.coreact-yade
 
