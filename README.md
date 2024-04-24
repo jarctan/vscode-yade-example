@@ -1,6 +1,7 @@
 This repository provides an example of use of the vscode extension for the Coreact YADE editor (https://github.com/amblafont/vscode-coreact-yade).
 Instructions to build a virtual environement (virtualbox or docker) with everything installed are provided in the directory
 [images/](images/README.md) (this is probably the easiest way to test the vscode extension).
+A video demonstrating the capabalities of the software for `distributivelaw.v` can be found at https://github.com/amblafont/vscode-yade-example/releases/download/v0.1/demo-yade-example.mp4.
 
 ## Requirements
 - Coq (tested with v8.18.0)
@@ -18,7 +19,7 @@ opam install coq-lsp coq-hierarchy-builder
 ## Instructions
 - `make` to compile
 - open the directory with vscode
-- open the file `example.v`
+- open the file `example.v` or `distributivelaw.v`
 
 ## Troubleshootings
 Tested on Linux MINT and MacOS.
