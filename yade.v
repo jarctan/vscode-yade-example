@@ -190,6 +190,12 @@ Ltac Fcomp_star T :=
    apply (Fcomp (s := T)) || apply (Fcomp3 T) || apply (Fcomp4 T).
 
 
+(* 
+  Put  the r.h.s as a composite of morphisms under a composite of
+   functors, and then apply the tactic.
+   That is, it will first turn the T G f · T g into T (G f · g)
+   and then apply the given tactic.
+*)
 Ltac do1_below_right t := 
   match goal with
     | |- {  {_} = {_}  · {?T <$> _}} => 
@@ -199,8 +205,12 @@ Ltac do1_below_right t :=
     end.
 
 
+(*
+  Cf what do_below_right1 does, but then it performs
+  the reverse transformation, turning T (G f · g) into T G f · T g
+*)
 Ltac do_below_right t := 
-  etransitivity;[|do1_below_right t];    rewrite ?Fcomp; cbn;reflexivity.
+  etransitivity;[|do1_below_right t];    rewrite ?Fcomp -?F1; cbn;reflexivity.
   
 
 Ltac do_below t :=
@@ -220,3 +230,7 @@ Ltac applyeq eq :=
   do_below ltac:(applyeq_toplevel eq).
 
 Ltac normalise := rewrite ?(Fcomp, assoc); cbn.
+
+(* remove identities *)
+Ltac cancel_ids :=
+  rewrite ?F1 ?comp1o ?comp1o; reflexivity.
