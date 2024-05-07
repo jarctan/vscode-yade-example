@@ -229,7 +229,7 @@ Ltac applyeq_toplevel eq :=
 Ltac applyeq eq :=
   do_below ltac:(applyeq_toplevel eq).
 
-Ltac normalise := rewrite ?(Fcomp, assoc); cbn.
+Ltac normalise := rewrite ?(Fcomp, assoc) -?F1; cbn.
 
 (* remove identities *)
 Ltac cancel_ids :=
