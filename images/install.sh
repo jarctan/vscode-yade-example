@@ -28,8 +28,6 @@ opam install --confirm-level=unsafe-yes coq coq-lsp coq-hierarchy-builder
 echo "*************"
 echo "Installing coreact-yade"
 echo "*************"
-curl  -L https://github.com/amblafont/graph-editor-web/releases/download/v0.5-alpha/coreact-yade_1.1.0_amd64.deb --output yade.deb
-sudo apt install -y ./yade.deb
 code --install-extension amblafont.coreact-yade
 
 echo "*************"

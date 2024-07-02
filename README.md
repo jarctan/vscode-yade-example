@@ -29,5 +29,3 @@ If the coq-lsp extension fails to start on vscode, try the following.
 1) install vscode with homebrew: ``brew install visual-studio-code`
 2) If you use opam, run `opam switch` and checks the output (it may instruct you to run an `eval` command to synchronise the shell)
 3) run `code .` in the same shell, assuming you are in this directory.
-
-If the diagram editor doesn't launch when opening the file example.v and moving the cursor to the line starting with YADE DIAGRAM, check that you can launch the editor from the command line with `/Applications/YADE.app/Contents/MacOS/YADE`. If not, check the note about MacOS at https://github.com/amblafont/graph-editor-web/releases
