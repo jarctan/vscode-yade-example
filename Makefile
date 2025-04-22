@@ -1,7 +1,11 @@
-.PHONY: all agdatex popl
+.PHONY: all
 
-all: cat.vo yade.vo
+all: example
 
+distributivelaw: yade.vo cat.vo cattactic.vo distributivelaw.vo
+
+example: yade.vo example.vo
+	
 %.vo: %.v
 	coqc -R . Yade $<
 

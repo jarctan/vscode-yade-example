@@ -1,3 +1,5 @@
+WARNING: These instructions are outdated. In particular, the YADE editor does not longer run on electron, but directly as a vscode extension.
+
 Here are some instructions to build a virtual box or a docker image with all the requirements installed to check the file.
 The Virtual box installation is easier.
 # Virtual Box 
