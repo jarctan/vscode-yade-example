@@ -10,13 +10,18 @@ Unset Printing Implicit Defensive.
 Require Import Yade.yade.
 (* However you must import the notations submodule *)
 Import yade.notations.
+Require Import RelationClasses.
 
 Section Example.
 
 Context (C : Type)(hom : C -> C -> Type)
     (compose : forall {a b c}, hom a b -> hom b c -> hom a c)
+    (eq_mor : forall {a b}, hom a b -> hom a b -> Prop)
+    (eq_setoid : forall {a} {b}, Equivalence (@eq_mor a b))
     (assoc : forall {a b c d} (f : hom a b)(g : hom b c)(h : hom c d),
-        compose f (compose g h) = compose (compose f g) h).
+        eq_mor (compose f (compose g h)) (compose (compose f g) h))
+    (eq_cong : forall {a b c} {f1 f2 : hom a b} {g1 g2 : hom b c},
+      eq_mor f1 f2 -> eq_mor g1 g2 -> eq_mor (compose f1 g1) (compose f2 g2)).
 
 Infix "\;" := compose (at level 40, left associativity).  
 
@@ -24,24 +29,23 @@ Infix "\;" := compose (at level 40, left associativity).
 To turn the goal into something that YADE can parse, the yade module 
 relies on typeclass inference.
  *)
-Instance category_from_cat : yade.preCategory C hom.
-refine {|
+Instance category_from_cat : yade.preCategory C hom := {
   yade.compose := @compose;
   yade.assoc := @assoc;
-  eq_mor := fun _ _ f g => f = g;
-|}.
-congruence.
-Defined.
+  yade.eq_mor := @eq_mor;
+  yade.eq_setoid := @eq_setoid;
+  yade.eq_cong := @eq_cong
+}.
 
-Example generateProof 
+Example generateProof
   (a a' b b' c c' : C)
   (f : hom a b) (g : hom b c)
   (f' : hom a' b') (g' : hom b' c')
   (m : hom a a') (n : hom b b') (p : hom c c')
-  (H' : g \; p = n \; g')
-  (H : f \; n = m \; f')
+  (H' : eq_mor (g \; p) (n \; g'))
+  (H : eq_mor (f \; n) (m \; f'))
    :
-  f \; g \; p = m \; f' \; g'.
+  eq_mor (f \; g \; p) (m \; f' \; g').
 Proof.
   (*
    If you move your mouse cursor here with the coq-lsp and
@@ -103,7 +107,7 @@ They are rendered with LaTeX (KaTeX) by default.
 Notation "\mu" := (f) (in custom yade_mor).
 Notation "\theta" := (a) (in custom yade_ob).
 
-Example latexExample : f \; f = f.
+Example latexExample : eq_mor (f \; f) f.
 Proof.
 (* When you move the cursor somewhere, the 
 coreact-yade extension turns the goal into something parsable by YADE.
@@ -143,10 +147,10 @@ Example constructProof
   (f : hom a b) (g : hom b c)
   (f' : hom a' b') (g' : hom b' c')
   (m : hom a a') (n : hom b b') (p : hom c c')
-  (H' : g \; p = n \; g')
-  (H : f \; n = m \; f')
+  (H' : eq_mor (g \; p) (n \; g'))
+  (H : eq_mor (f \; n) (m \; f'))
    :
-  f \; g \; p = m \; f' \; g'.
+  eq_mor (f \; g \; p) (m \; f' \; g').
 Proof.
 
 (*
@@ -197,6 +201,7 @@ left hand-side or right hand-side of the equation: in that case,
 just select the arrows of the other hand-side and press the key 'v'.
 
 *)
+
 
 Abort.
 End Example.

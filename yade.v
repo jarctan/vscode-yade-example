@@ -150,10 +150,10 @@ Ltac propagate_marker :=
 (* tries to detect a precategory using typeclass inference  *)
 Ltac to_notation_with_explicit_objects := 
  refine (_ :>
-   (toplevel_morphism 
-    (marker _) =
-     toplevel_morphism
-    (marker _)))
+   (eq_mor (toplevel_morphism 
+    (marker _))
+     (toplevel_morphism
+    (marker _))))
  ;
 repeat propagate_marker; rewrite /marker  ;
 rewrite ?assoc .
