@@ -24,13 +24,14 @@ Infix "\;" := compose (at level 40, left associativity).
 To turn the goal into something that YADE can parse, the yade module 
 relies on typeclass inference.
  *)
-Instance category_from_cat : yade.preCategory C hom:=
-{
-  compose := @compose;
-  assoc := @assoc;
-}.
-
-
+Instance category_from_cat : yade.preCategory C hom.
+refine {|
+  yade.compose := @compose;
+  yade.assoc := @assoc;
+  eq_mor := fun _ _ f g => f = g;
+|}.
+congruence.
+Defined.
 
 Example generateProof 
   (a a' b b' c c' : C)

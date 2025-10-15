@@ -9,18 +9,25 @@ Unset Strict Implicit.
 Unset Printing Implicit Defensive.
 Require Import ssreflect.
 Generalizable All Variables.
+Require Import RelationClasses.
+Require Import Setoid.
 
 Declare Scope yade_verbatim.
 
 Declare Custom Entry yade_ob.
 Declare Custom Entry yade_mor.
 
-Class preCategory (ob : Type)(hom : ob -> ob -> Type)
+Class preCategory {ob : Type}{hom : ob -> ob -> Type} (* TODO: remove implicits *)
     :=
 {
-compose : forall {a b c}, hom a b -> hom b c -> hom a c;
+compose {a b c} : hom a b -> hom b c -> hom a c;
+eq_mor {a b} : hom a b -> hom a b -> Prop;
+eq_setoid {a} {b} :: Equivalence (@eq_mor a b);
+eq_cong : forall {a b c} {f1 f2 : hom a b} {g1 g2 : hom b c},
+    eq_mor f1 f2 -> eq_mor g1 g2 -> eq_mor (compose f1 g1) (compose f2 g2);
 assoc : forall a b c d (f : hom a b)(g : hom b c)(h : hom c d),
-        compose f (compose g h) = compose (compose f g) h;
+        eq_mor (compose f (compose g h)) (compose (compose f g) h);
+
 } as C.
 
 Arguments preCategory : clear implicits.
@@ -31,8 +38,6 @@ Definition toplevel_morphism {ob : Type}{hom : ob -> ob -> Type}
 
 (* This will be given the notation compose_infix *)
 Definition compose_infix := @compose.
-
-Definition eq_mor {A : Type} (a a' : A):= a = a'.
 
 
 (* This is the notation for the morphisms *)
@@ -76,19 +81,23 @@ Lemma cancel_postcomposition `{C : preCategory ob hom} {a b c : ob}
      <YADE> f · g =
 f' · g </YADE>.
 Proof.
-congruence.
+exact (fun H => eq_cong H (reflexivity g)).
 Qed.
 Lemma cancel_precomposition `{C : preCategory ob hom}{a b c : ob}(f : hom a b)(g g' : hom b c) :
      <YADE> g = g' </YADE> -> <YADE> f · g =
 f · g' </YADE>.
-congruence.
+Proof.
+intro H.
+apply eq_cong.
+reflexivity.
+assumption.
 Qed.
-
+Print cancel_postcomposition.
 Section NoEqMor.
 (* Notation only used in this section.
 rewrite assoc'/assoc'' is faster when we unfold eq_mor.
 *)
-Notation "<YADE_EQ> t = u </YADE_EQ>" := ( t = u) (t custom yade_mor, u custom yade_mor).
+Notation "<YADE_EQ> t = u </YADE_EQ>" := (eq_mor t u) (t custom yade_mor, u custom yade_mor).
 (* associativity with the YADE notation *)
 Lemma assoc'' `{C : preCategory ob hom}: forall a b c d 
         (f : hom a b)(g : hom b c)(h : hom c d),
@@ -106,10 +115,11 @@ Qed.
 
 End NoEqMor.
 
-Lemma transitivity : forall {A : Type} (a b c : A),
-  <YADE> a = b </YADE> -> <YADE> b = c </YADE> -> <YADE> a = c </YADE>.
+Lemma transitivity `{C : preCategory ob hom}: forall {a b} (f g h : hom a b),
+  <YADE> f = g </YADE> -> <YADE> g = h </YADE> -> <YADE> f = h </YADE>.
   Proof.
-  congruence.
+  intros.
+  transitivity g; assumption.
   Qed.
 End WithNotations.
 
