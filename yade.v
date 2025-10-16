@@ -46,14 +46,14 @@ Module PreNotations.
   Notation "f · g" := (compose_infix _ f g)  (in custom yade_mor at level 40, left associativity).
   Notation "<YADE> t = u </YADE>" := (eq_mor t u) (t custom yade_mor, u custom yade_mor).
   Notation "<YADE_EXPLICIT> a -- t -> b = c -- u -> d </YADE_EXPLICIT>" := 
-    (eq (toplevel_morphism (a := a) (b := b) t) 
+    (eq_mor (toplevel_morphism (a := a) (b := b) t) 
             (toplevel_morphism  (a := c) (b := d) u)) 
     (t custom yade_mor, u custom yade_mor, 
     a custom yade_ob, b custom yade_ob,
     c custom yade_ob, d custom yade_ob
     ).
   Notation "<YADE_EXPLICIT_VERB> a -- t -> b = c -- u -> d </YADE_EXPLICIT_VERB>" := 
-    (eq (toplevel_morphism (a := a) (b := b) t) 
+    (eq_mor (toplevel_morphism (a := a) (b := b) t) 
             (toplevel_morphism  (a := c) (b := d) u)) 
     (t custom yade_mor, u custom yade_mor, 
     a custom yade_ob, b custom yade_ob,
@@ -170,8 +170,8 @@ Ltac normalise_objects := cbn.
 Ltac to_notation_with_implicit_objects :=
   to_notation_with_explicit_objects;
   match goal with 
-    |- toplevel_morphism ?x = 
-      toplevel_morphism ?y =>
+    |- eq_mor (toplevel_morphism ?x)
+      (toplevel_morphism ?y) =>
     change (eq_mor x y)
     end;
    fold compose_infix.
